@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Book Page Generator</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <h1>Book Page Generator</h1>
+        <p class="sub">
+          Converts a PDF or a Text file into book-style pages.
+        </p>
+      </header>
+
+      <main class="card">
+        <label class="field">
+          <span class="label">PDF or plain text (.txt)</span>
+          <input
+            type="file"
+            id="fileInput"
+            accept="application/pdf,.pdf,text/plain,.txt"
+          />
+        </label>
+
+        <div class="check-wrap compose-mode-wrap">
+          <label class="check">
+            <input type="checkbox" id="composeTextMode" />
+            <span>Write text directly (no .txt upload)</span>
+          </label>
+        </div>
+
+        <div id="txtPanel" class="txt-panel hidden">
+          <div class="grid txt-align-grid">
+            <label class="field">
+              <span class="label">Default paragraph alignment (for lines without their own alignment)</span>
+              <select id="textAlign">
+                <option value="left">Left</option>
+                <option value="center" selected>Center</option>
+                <option value="right">Right</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="label">Vertical alignment of text content</span>
+              <select id="textValign">
+                <option value="top">Top (blank space below)</option>
+                <option value="center" selected>Center</option>
+                <option value="bottom">Bottom (blank space above)</option>
+              </select>
+            </label>
+          </div>
+          <div class="grid txt-align-grid">
+            <label class="field">
+              <span class="label">Font size for editor &amp; export (px)</span>
+              <input
+                type="number"
+                id="textFontSize"
+                min="8"
+                max="120"
+                value="20"
+                step="1"
+              />
+            </label>
+            <label class="field">
+              <span class="label">Font family</span>
+              <select id="textFontFamily">
+                <option value="georgia" selected>Georgia</option>
+                <option value="times">Times New Roman</option>
+                <option value="arial">Arial</option>
+                <option value="verdana">Verdana</option>
+                <option value="courier">Courier New</option>
+                <option value="palatino">Palatino / Palatino Linotype</option>
+                <option value="garamond">Garamond</option>
+              </select>
+            </label>
+          </div>
+          <label class="field">
+            <span class="label">Custom font (.ttf, .otf, .woff, .woff2)</span>
+            <div class="bg-upload-row">
+              <input
+                type="file"
+                id="textCustomFontInput"
+                accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2"
+              />
+              <button type="button" class="btn ghost" id="textCustomFontClear">
+                Remove custom font
+              </button>
+            </div>
+            <p class="asset-status" id="textCustomFontStatus"></p>
+          </label>
+          <div class="field rich-field">
+            <span class="label">Text content</span>
+            <div class="rich-wrap" id="richWrap">
+              <div class="rich-toolbar" id="richToolbar" role="toolbar">
+                <button type="button" class="tb-btn" data-cmd="bold" title="Bold">
+                  <b>B</b>
+                </button>
+                <button type="button" class="tb-btn" data-cmd="italic" title="Italic">
+                  <i>I</i>
+                </button>
+                <button type="button" class="tb-btn" data-cmd="underline" title="Underline">
+                  <u>U</u>
+                </button>
+                <label class="tb-color" title="Font color — select text, then pick a color">
+                  <span class="tb-color-a">A</span>
+                  <input type="color" id="toolbarTextColor" value="#1a1a1a" />
+                </label>
+                <span class="tb-sep"></span>
+                <button type="button" class="tb-btn" data-cmd="justifyLeft" title="Align current paragraph left">
+                  Left
+                </button>
+                <button type="button" class="tb-btn" data-cmd="justifyCenter" title="Align current paragraph center">
+                  Center
+                </button>
+                <button type="button" class="tb-btn" data-cmd="justifyRight" title="Align current paragraph right">
+                  Right
+                </button>
+                <span class="tb-sep"></span>
+                <button type="button" class="tb-btn" data-cmd="insertUnorderedList" title="Bullet list">
+                  • List
+                </button>
+                <button type="button" class="tb-btn" data-cmd="insertOrderedList" title="Numbered list">
+                  1. List
+                </button>
+                <span class="tb-sep"></span>
+                <button type="button" class="tb-btn" data-cmd="undo" title="Undo">
+                  Undo
+                </button>
+                <button type="button" class="tb-btn" data-cmd="redo" title="Redo">
+                  Redo
+                </button>
+                <span class="tb-sep"></span>
+                <button type="button" class="tb-btn" data-cmd="removeFormat" title="Clear formatting">
+                  Clear
+                </button>
+                <span class="tb-sep"></span>
+                <button type="button" class="tb-btn" id="pageGuidesToggle" title="Show page-height guides (matches export box)">
+                  Page guides
+                </button>
+                <button type="button" class="tb-btn" id="pageGuidesReset" title="Reset guide positions" disabled>
+                  Reset guides
+                </button>
+                <button type="button" class="tb-btn" id="pageGuidesSnapLines" title="Insert line breaks at page guides so rows are not split">
+                  Snap lines to guides
+                </button>
+              </div>
+              <div class="rich-editor-wrap" id="richEditorWrap">
+                <div
+                  id="pageMarkersLayer"
+                  class="page-markers-layer hidden"
+                  aria-hidden="true"
+                ></div>
+                <div
+                  id="textEditor"
+                  class="rich-editor"
+                  contenteditable="true"
+                  role="textbox"
+                  aria-multiline="true"
+                  spellcheck="true"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <label class="field">
+            <span class="label">Content width (px)</span>
+            <input type="number" id="width" min="1" value="1728" />
+          </label>
+          <label class="field">
+            <span class="label">Content height (px)</span>
+            <input type="number" id="height" min="1" value="2166" />
+          </label>
+          <label class="field">
+            <span class="label">Top transparent (px)</span>
+            <input type="number" id="top" min="0" value="149" />
+          </label>
+          <label class="field">
+            <span class="label">Bottom transparent (px)</span>
+            <input type="number" id="bottom" min="0" value="149" />
+          </label>
+          <label class="field">
+            <span class="label">Inner pad / white margin (px)</span>
+            <input type="number" id="pad" min="0" value="40" />
+          </label>
+          <label class="field">
+            <span class="label">Format</span>
+            <select id="format">
+              <option value="png">PNG (largest)</option>
+              <option value="webp" selected>WebP (smaller)</option>
+              <option value="jpeg">JPEG (smaller, white top/bottom)</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="label">Quality (WebP / JPEG, 1–100)</span>
+            <input type="number" id="quality" min="1" max="100" value="78" />
+          </label>
+        </div>
+
+        <div class="txt-panel">
+          <div class="field">
+            <span class="label">Page background (PDF &amp; text — margins &amp; strips)</span>
+            <div class="bg-upload-row">
+              <input
+                type="file"
+                id="pageBackgroundInput"
+                accept="image/*"
+              />
+              <button type="button" class="btn ghost" id="pageBackgroundClear">
+                Remove background
+              </button>
+            </div>
+            <p class="asset-status" id="pageBackgroundStatus"></p>
+          </div>
+        </div>
+
+        <div id="fitWidthWrap" class="check-wrap">
+          <label class="check">
+            <input type="checkbox" id="fitWidth" checked />
+            <span>Fit width (PDF only — no side letterboxing)</span>
+          </label>
+        </div>
+
+        <p class="hint" id="hint">
+          Browsers cannot pick an arbitrary “output folder.” PDF output is a ZIP
+          download. Text (.txt) output is a single image file.
+        </p>
+
+        <div class="actions">
+          <button type="button" id="convert" class="btn primary">
+            Convert &amp; download
+          </button>
+        </div>
+
+        <div id="status" class="status" aria-live="polite"></div>
+        <div class="progress-wrap hidden" id="progressWrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

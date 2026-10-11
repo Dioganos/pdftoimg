@@ -1,0 +1,21 @@
+{
+  "name": "pdftoimg",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "convert.js",
+  "exports": "./convert.js",
+  "bin": {
+    "pdftoimg": "./cli.js"
+  },
+  "scripts": {
+    "start": "node cli.js",
+    "web:install": "npm install --prefix web",
+    "web:dev": "npm run dev --prefix web",
+    "web:build": "npm run build --prefix web",
+    "web:preview": "npm run preview --prefix web"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.65",
+    "pdfjs-dist": "^4.10.38"
+  }
+}

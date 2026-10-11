@@ -1,0 +1,19 @@
+{
+  "name": "pdftoimg-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "postinstall": "node scripts/copy-pdf-worker.mjs",
+    "dev": "node scripts/copy-pdf-worker.mjs && vite",
+    "build": "node scripts/copy-pdf-worker.mjs && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "html2canvas": "^1.4.1",
+    "jszip": "^3.10.1",
+    "pdfjs-dist": "^4.10.38"
+  },
+  "devDependencies": {
+    "vite": "^6.0.3"
+  }
+}
